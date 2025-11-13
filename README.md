@@ -37,9 +37,11 @@ By the way, during the organization process, I also discovered some issues with 
 
 ## Code Style
 
-To make the code look more compact, I changed the code style in the tutorial to [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R).
+To make the code look more compact, I changed the code style in the tutorial to [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R). However, if the statement before the `{` is split into multiple lines, I will revert to [Allman style](https://en.wikipedia.org/wiki/Indentation_style#Allman_style) to ensure readability.
 
-However, if the statement before the `{` is split into multiple lines, I will revert to [Allman style](https://en.wikipedia.org/wiki/Indentation_style#Allman_style) to ensure readability.
+> [!TIP] The difference between K&R Style and Allman Style:
+> - K&R Style: The opening `{` is placed at the end of the line preceding the block.
+> - Allman Style: The opening `{` is placed on a new line, aligned with the block's indentation level.
 
 For example:
 
