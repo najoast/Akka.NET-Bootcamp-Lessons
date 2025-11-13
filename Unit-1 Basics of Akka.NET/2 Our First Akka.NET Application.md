@@ -259,5 +259,7 @@ More articles, blog posts, and videos relevant to this lesson:
     
 4. Why not use [.NET string interpolation](https://learn.microsoft.com/en-us/dotnet/csharp/tutorials/string-interpolation) here? _Performance_. Generally with all logging calls, whether it’s Akka.NET’s `ILogger` or Microsoft.Extensions.Logging you want to defer string formatting until the log hits the log export pipeline. This is an extremely useful performance optimization technique known as “[Deferred Allocation](https://www.youtube.com/watch?v=Hk_jvttYb2c).” Roslyn Analyzers will often flag string interpolation usage inside logging statements for this reason. [↩](https://petabridge.com/bootcamp/lessons/unit-0/first-akkadotnet-app/#fnref:2)
 
-- Previous Lesson: [[1 Why Learn Akka.NET]]
-- Next Lesson: 
+<div style="display: flex; justify-content: space-between;">
+    <a href="./1 Why Learn Akka.NET.md">« Previous Lesson</a>
+    <a href="./3 Effective Actor Messaging.md">Next Lesson »</a>
+</div>

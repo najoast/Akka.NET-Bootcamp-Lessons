@@ -217,5 +217,7 @@ We implemented our `ParserActor` and learned about working with `Task`s insid
 
 ---
 
-- Previous Lesson: [[5 Working with Child Actors]]
-- Next Lesson: [[7 Akka.Hosting, Routers, and Dependency Injection]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="./5 Working with Child Actors.md">« Previous Lesson</a>
+    <a href="./7 Akka.Hosting, Routers, and Dependency Injection.md">Next Lesson »</a>
+</div>

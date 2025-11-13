@@ -179,6 +179,7 @@ With configuration out the way, we are onto our final lesson of Unit 1: building
 
 ---
 
-- Previous Lesson: [[8 Integration Testing with Akka.Hosting.TestKit]]
-- Next Lesson: [[10 Writing Sagas with Actors, Message Stashing, and IWithTimers]]
-
+<div style="display: flex; justify-content: space-between;">
+    <a href="./8 Integration Testing with Akka.Hosting.TestKit.md">« Previous Lesson</a>
+    <a href="./10 Writing Sagas with Actors, Message Stashing, and IWithTimers.md">Next Lesson »</a>
+</div>

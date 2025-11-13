@@ -123,5 +123,8 @@ We’re going to get into this componentry as we go through the lessons. For now
 - [Building Headless Akka.NET Services](https://www.youtube.com/watch?v=EMFALLo0OJ0)
 
 ---
-- Previous Lesson: [[3 Effective Actor Messaging]]
-- Next Lesson: [[2 Actor Hierarchies and Domain Modeling]]
+
+<div style="display: flex; justify-content: space-between;">
+    <a href="../Unit-1 Basics of Akka.NET/3 Effective Actor Messaging.md">« Previous Lesson</a>
+    <a href="./2 Actor Hierarchies and Domain Modeling.md">Next Lesson »</a>
+</div>

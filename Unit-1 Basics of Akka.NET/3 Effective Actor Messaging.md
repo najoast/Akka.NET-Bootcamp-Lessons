@@ -282,3 +282,8 @@ In the next unit, Unit 1 - we’re going to take our Akka.NET education even fur
 
 - Previous Lesson: [[2 Our First Akka.NET Application]]
 - Next Lesson: [[1 Using Akka.Templates to Create New Projects]]
+
+<div style="display: flex; justify-content: space-between;">
+    <a href="./2 Our First Akka.NET Application.md">« Previous Lesson</a>
+    <a href="../Unit-2 Building Local Akka.NET Applications/1 Using Akka.Templates to Create New Projects.md">Next Lesson »</a>
+</div>

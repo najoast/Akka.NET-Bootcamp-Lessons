@@ -25,4 +25,6 @@ We’ll gladly announce new units and contents at all of the following locations
 
 ---
 
-- Previous Lesson: [[10 Writing Sagas with Actors, Message Stashing, and IWithTimers]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="./Unit-2 Building Local Akka.NET Applications/10 Writing Sagas with Actors, Message Stashing, and IWithTimers.md">« Previous Lesson</a>
+</div>

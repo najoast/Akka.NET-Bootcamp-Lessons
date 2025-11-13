@@ -213,5 +213,7 @@ More articles, blog posts, and videos relevant to this lesson:
 
 [^1]: If you want a `CircularBuffer<T>` implementation, try [Petabridge.Collections](https://github.com/petabridge/Petabridge.Collections) [↩](https://petabridge.com/bootcamp/lessons/unit-0/why-akkadotnet/#fnref:1)
 
-- Previous Lesson: [[Akka.NET Bootcamp Lesson Overview]]
-- Next Lesson: [[2 Our First Akka.NET Application]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="../Akka.NET Bootcamp Lesson Overview.md">« Previous Lesson</a>
+    <a href="./2 Our First Akka.NET Application.md">Next Lesson »</a>
+</div>

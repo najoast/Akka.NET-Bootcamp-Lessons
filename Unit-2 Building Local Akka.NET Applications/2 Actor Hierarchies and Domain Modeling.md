@@ -255,5 +255,7 @@ This lesson was already getting pretty long, so we’re going to take a break he
 
 ---
 
-- Previous Lesson: [[1 Using Akka.Templates to Create New Projects]]
-- Next Lesson: [[3 Behavior Switching and Receive Timeouts]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="../Unit-1 Basics of Akka.NET/3 Effective Actor Messaging.md">« Previous Lesson</a>
+    <a href="./2 Actor Hierarchies and Domain Modeling.md">Next Lesson »</a>
+</div>

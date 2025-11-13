@@ -188,5 +188,7 @@ That’s it for our quick introduction to the Akka.NET TestKit - in the next les
 
 ---
 
-- Previous Lesson: [[3 Behavior Switching and Receive Timeouts]]
-- Next Lesson: [[5 Working with Child Actors]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="./3 Behavior Switching and Receive Timeouts.md">« Previous Lesson</a>
+    <a href="./5 Working with Child Actors.md">Next Lesson »</a>
+</div>

@@ -223,5 +223,7 @@ That’s it for this lesson! In the next lesson we are going to use the Akka.Tes
 
 ---
 
-- Previous Lesson: [[2 Actor Hierarchies and Domain Modeling]]
-- Next Lesson: [[4 Testing Actors with Akka.TestKit]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="./2 Actor Hierarchies and Domain Modeling.md">« Previous Lesson</a>
+    <a href="./4 Testing Actors with Akka.TestKit.md">Next Lesson »</a>
+</div>

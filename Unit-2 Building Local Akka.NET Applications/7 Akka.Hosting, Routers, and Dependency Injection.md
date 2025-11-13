@@ -279,7 +279,7 @@ Now that we’ve defined some `AkkaConfigurationBuilder` extensions for wiring
 
 ---
 
-- Previous Lesson: [[6 Actors and Async and Await]]
-- Next Lesson: [[8 Integration Testing with Akka.Hosting.TestKit]]
-
-
+<div style="display: flex; justify-content: space-between;">
+    <a href="./6 Actors and Async and Await.md">« Previous Lesson</a>
+    <a href="./8 Integration Testing with Akka.Hosting.TestKit.md">Next Lesson »</a>
+</div>

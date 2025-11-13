@@ -455,5 +455,7 @@ You’ve finished Unit-1 of Akka.NET Bootcamp. Well done. Want to [get notified
 
 ---
 
-- Previous Lesson: [[9 Using IOptions and Microsoft.Extensions.Configuration]]
-- Next Lesson: [[Future Bootcamp Units and Lessons]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="./9 Using IOptions and Microsoft.Extensions.Configuration.md">« Previous Lesson</a>
+    <a href="../Future Bootcamp Units and Lessons.md">Next Lesson »</a>
+</div>

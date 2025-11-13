@@ -145,5 +145,7 @@ We are almost done with Unit 1 of Akka.NET Bootcamp. The next thing we need to d
 
 ---
 
-- Previous Lesson: [[7 Akka.Hosting, Routers, and Dependency Injection]]
-- Next Lesson: [[9 Using IOptions and Microsoft.Extensions.Configuration]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="./7 Akka.Hosting, Routers, and Dependency Injection.md">« Previous Lesson</a>
+    <a href="./9 Using IOptions and Microsoft.Extensions.Configuration.md">Next Lesson »</a>
+</div>

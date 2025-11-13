@@ -88,5 +88,7 @@ Now that we’ve implemented half of the actors we need to power `AkkaWordCount
 
 ---
 
-- Previous Lesson: [[4 Testing Actors with Akka.TestKit]]
-- Next Lesson: [[6 Actors and Async and Await]]
+<div style="display: flex; justify-content: space-between;">
+    <a href="./4 Testing Actors with Akka.TestKit.md">« Previous Lesson</a>
+    <a href="./6 Actors and Async and Await.md">Next Lesson »</a>
+</div>
