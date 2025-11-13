@@ -41,20 +41,16 @@ using Xunit.Abstractions;
 
 namespace AkkaWordCounter2.App.Tests;
 
-public class DocumentWordCounterSpecs : TestKit
-{
+public class DocumentWordCounterSpecs : TestKit {
     public static readonly Akka.Configuration.Config Config = "akka.loglevel=DEBUG";
     
-    public DocumentWordCounterSpecs(ITestOutputHelper output) : base(output: output, config: Config)
-    {
-        
+    public DocumentWordCounterSpecs(ITestOutputHelper output) : base(output: output, config: Config) {
     }
     
     public static readonly AbsoluteUri TestDocumentUri = new(new Uri("http://example.com/test"));
 
     [Fact]
-    public async Task ShouldProcessWordCountsCorrectly()
-    {
+    public async Task ShouldProcessWordCountsCorrectly() {
         // arrange
         var props = Props.Create(() => new DocumentWordCounter(TestDocumentUri));
         var actor = Sys.ActorOf(props);
@@ -70,8 +66,7 @@ public class DocumentWordCounterSpecs : TestKit
         actor.Tell(new DocumentQueries.FetchCounts(TestDocumentUri), TestActor);
         
         // act
-        foreach (var message in messages)
-        {
+        foreach (var message in messages) {
             actor.Tell(message);
         }
         
@@ -107,13 +102,10 @@ Now by default the `TestKit` does not support Akka.Hosting, so you have to con
 Here’s how we do that in `DocumentWordCounterSpecs`:
 
 ```cs
-public class DocumentWordCounterSpecs : TestKit
-{
+public class DocumentWordCounterSpecs : TestKit {
     public static readonly Akka.Configuration.Config Config = "akka.loglevel=DEBUG";
     
-    public DocumentWordCounterSpecs(ITestOutputHelper output) : base(output: output, config: Config)
-    {
-        
+    public DocumentWordCounterSpecs(ITestOutputHelper output) : base(output: output, config: Config) {
     }
 }
 ```
@@ -146,7 +138,7 @@ All `ExpectMsgAsync<T>` calls are designed to fail if they:
 You can lengthen the timeout on an individual `ExpectMsgAsync<T>` call by passing in a longer `TimeSpan` on one of the optional parameters, or you can wrap the `ExpectMsgAsync<T>` call inside a `WithinAsync` block:
 
 ```cs
-await WithinAsync(async () =>{
+await WithinAsync(async () => {
     // both calls must complete within the same 10 second window, not two separate ones
     await ExpectMsgAsync<DocumentEvents.CountsTabulatedForDocument>();
     await ExpectMsgAsync<DocumentEvents.CountsTabulatedForDocument>();

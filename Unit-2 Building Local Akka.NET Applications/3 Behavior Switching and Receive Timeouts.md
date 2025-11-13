@@ -68,30 +68,24 @@ using static AkkaWordCounter2.App.DocumentEvents;
 using static AkkaWordCounter2.App.DocumentQueries;
 namespace AkkaWordCounter2.App.Actors;
 
-public sealed class DocumentWordCounter : UntypedActor
-{
+public sealed class DocumentWordCounter : UntypedActor {
     private readonly AbsoluteUri _documentId;
     private readonly ILoggingAdapter _log = Context.GetLogger();
     
     private readonly Dictionary<string, int> _wordCounts = new();
     private readonly HashSet<IActorRef> _subscribers = new();
 
-    public DocumentWordCounter(AbsoluteUri documentId)
-    {
+    public DocumentWordCounter(AbsoluteUri documentId) {
         _documentId = documentId;
     }
     
     // Our default behavior when we're running
-    protected override void OnReceive(object message)
-    {
-        switch (message)
-        {
+    protected override void OnReceive(object message) {
+        switch (message) {
             case WordsFound wordsFound when wordsFound.DocumentId == _documentId:
                 _log.Debug("Found {0} words in document {1}", wordsFound.Tokens.Count, _documentId);
-                foreach (var word in wordsFound.Tokens)
-                {
-                    if (!_wordCounts.TryAdd(word, 1))
-                    {
+                foreach (var word in wordsFound.Tokens) {
+                    if (!_wordCounts.TryAdd(word, 1)) {
                         _wordCounts[word]++;
                     }
                 }
@@ -101,8 +95,7 @@ public sealed class DocumentWordCounter : UntypedActor
                 break;
             case EndOfDocumentReached endOfDocumentReached when endOfDocumentReached.DocumentId == _documentId:
                 var output = new CountsTabulatedForDocument(_documentId, _wordCounts.ToImmutableDictionary(x => x.Key, x => x.Value));
-                foreach (var subscriber in _subscribers)
-                {
+                foreach (var subscriber in _subscribers) {
                     subscriber.Tell(output);
                 }
                 _subscribers.Clear();
@@ -123,10 +116,8 @@ public sealed class DocumentWordCounter : UntypedActor
         }
     }
 
-    private void Complete(object message)
-    {
-        switch (message)
-        {
+    private void Complete(object message) {
+        switch (message) {
             case FetchCounts:
                 Sender.Tell(new CountsTabulatedForDocument(_documentId, _wordCounts.ToImmutableDictionary(x => x.Key, x => x.Value)));
                 break;
@@ -146,8 +137,7 @@ public sealed class DocumentWordCounter : UntypedActor
         }
     }
 
-    protected override void PreStart()
-    {
+    protected override void PreStart() {
         SetReceiveTimeout(TimeSpan.FromMinutes(2));
     }
 }
@@ -204,8 +194,7 @@ sequenceDiagram
 In this particular instance, you can see us setting a 2-minute receive timeout inside the `PreStart` method of the `DocumentWordCounter` actor:
 
 ```cs
-protected override void PreStart()
-{
+protected override void PreStart() {
     SetReceiveTimeout(TimeSpan.FromMinutes(2));
 }
 ```

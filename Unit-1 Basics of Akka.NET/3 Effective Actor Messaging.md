@@ -132,18 +132,16 @@ public sealed class CounterActor : UntypedActor {
     private readonly HashSet<IActorRef> _subscribers = new();
 
     protected override void OnReceive(object message) {
-        switch(message){
-            case CountTokens tokens:
-            {
-                foreach(var t in tokens.Tokens){
-                    if(!_tokenCounts.TryAdd(t, 1)){
+        switch(message) {
+            case CountTokens tokens: {
+                foreach(var t in tokens.Tokens) {
+                    if(!_tokenCounts.TryAdd(t, 1)) {
                         _tokenCounts[t] += 1;
                     }
                 }
                 break;
             }
-            case ExpectNoMoreTokens:
-            {
+            case ExpectNoMoreTokens: {
                 _doneCounting = true;
 
                 _log.Info(
@@ -153,8 +151,7 @@ public sealed class CounterActor : UntypedActor {
                 // ensure the output is immutable
                 // cheaper to do this once at the end versus every time we count
                 var totals = _tokenCounts.ToImmutableDictionary();
-                foreach(var s in _subscribers)
-                {
+                foreach(var s in _subscribers) {
                     s.Tell(totals);
                 }
 
@@ -162,14 +159,12 @@ public sealed class CounterActor : UntypedActor {
                 _subscribers.Clear();
                 break;
             }
-            case FetchCounts fetchCounts when _doneCounting:
-            {
+            case FetchCounts fetchCounts when _doneCounting: {
                 // instantly reply with the results
                 fetchCounts.Subscriber.Tell(_tokenCounts.ToImmutableDictionary());
                 break;
             }
-            case FetchCounts fetch:
-            {
+            case FetchCounts fetch: {
                 _subscribers.Add(fetch.Subscriber);
                 break;
             }
@@ -191,22 +186,19 @@ public sealed class ParserActor : UntypedActor {
     private readonly ILoggingAdapter _log = Context.GetLogger();
     private readonly IActorRef _countingActor;
 
-    public ParserActor(IActorRef countingActor)
-    {
+    public ParserActor(IActorRef countingActor) {
         _countingActor = countingActor;
     }
 
     private const int TokenBatchSize = 10;
 
-    protected override void OnReceive(object message){
-        switch(message){
-            case ProcessDocument process:
-            {
+    protected override void OnReceive(object message) {
+        switch(message) {
+            case ProcessDocument process: {
                 // chunk tokens into buckets of 10
-                foreach(var tokenBatch in process.RawText.Split(" ").Chunk(TokenBatchSize)){
+                foreach(var tokenBatch in process.RawText.Split(" ").Chunk(TokenBatchSize)) {
                     _countingActor.Tell(new CountTokens(tokenBatch));
                 }
-
                 // we are finished
                 _countingActor.Tell(new ExpectNoMoreTokens());
                 break;
@@ -247,12 +239,10 @@ parserActor.Tell(new DocumentCommands.ProcessDocument(
     ));
 
 IDictionary<string, int> counts = await completionPromise;
-foreach(var kvp in counts)
-{
+foreach(var kvp in counts) {
     // going to use string interpolation here because we don't care about perf
     myActorSystem.Log.Info($"{kvp.Key}: {kvp.Value} instances");
 }
-
 
 /* THIS CODE WAS ALREADY HERE BEFORE */
 await myActorSystem.Terminate();

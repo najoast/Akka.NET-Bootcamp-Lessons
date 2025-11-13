@@ -37,8 +37,7 @@ var hostBuilder = new HostBuilder();
 
 
 hostBuilder
-    .ConfigureServices((context, services) =>
-    {
+    .ConfigureServices((context, services) => {
         services.AddAkka("MyActorSystem", (builder, sp) => { });
     });
 
@@ -66,10 +65,8 @@ using Microsoft.Extensions.DependencyInjection; // added as part of AddHttpClien
 
 var hostBuilder = new HostBuilder();
 
-
 hostBuilder
-    .ConfigureServices((context, services) =>
-    {
+    .ConfigureServices((context, services) => {
         services.AddHttpClient();
         services.AddAkka("MyActorSystem", (builder, sp) => { });
     });
@@ -89,8 +86,7 @@ Open `Program.cs` and add the following code to the `AddAkka` method:
 
 ```cs
 builder
-    .ConfigureLoggers(logConfig =>
-    {
+    .ConfigureLoggers(logConfig => {
         logConfig.AddLoggerFactory();
     });
 ```
@@ -98,11 +94,9 @@ builder
 The entire `AddAkka` method should look like this:
 
 ```cs
-services.AddAkka("MyActorSystem", (builder, sp) =>
-{
+services.AddAkka("MyActorSystem", (builder, sp) => {
     builder
-        .ConfigureLoggers(logConfig =>
-        {
+        .ConfigureLoggers(logConfig => {
             logConfig.AddLoggerFactory();
         });
 });
@@ -131,12 +125,9 @@ using AkkaWordCounter2.App.Actors;
 
 namespace AkkaWordCounter2.App.Config;
 
-public static class ActorConfigurations
-{
-    public static AkkaConfigurationBuilder AddWordCounterActor(this AkkaConfigurationBuilder builder)
-    {
-        return builder.WithActors((system, registry, _) =>
-        {
+public static class ActorConfigurations {
+    public static AkkaConfigurationBuilder AddWordCounterActor(this AkkaConfigurationBuilder builder) {
+        return builder.WithActors((system, registry, _) => {
             var props = Props.Create(() => new WordCounterManager());
             var actor = system.ActorOf(props, "wordcounts");
             registry.Register<WordCounterManager>(actor);
@@ -164,8 +155,7 @@ This will allow the `ActorRegistry` to retrieve the `WordCounterManager`’s�
 ```cs
 public WordCountJobActor(
     IRequiredActor<WordCounterManager> wordCounterManager,
-    IRequiredActor<ParserActor> parserActor)
-{
+    IRequiredActor<ParserActor> parserActor) {
     _wordCounterManager = wordCounterManager;
     _parserActor = parserActor;
 }
@@ -178,10 +168,8 @@ Next, we need to configure the `ParserActor` - and if you recall, this actor t
 Add the following code to the `ActorConfigurations` class we just defined:
 
 ```cs
-public static AkkaConfigurationBuilder AddParserActors(this AkkaConfigurationBuilder builder)
-{
-    return builder.WithActors((system, registry, resolver) =>
-    {
+public static AkkaConfigurationBuilder AddParserActors(this AkkaConfigurationBuilder builder) {
+    return builder.WithActors((system, registry, resolver) => {
         // ParserActor has DI'd dependencies
         var props = resolver.Props<ParserActor>()
             // create a round-robin pool of 5
@@ -234,8 +222,7 @@ Applying the same pattern to Akka.NET actors, which can have uptimes measured in
 If you need to inject an inherently transient object like `SqlConnection`s into an actor, you do it the following way[^1]:
 
 ```cs
-internal sealed class CohortActor : UntypedPersistentActor, IWithTimers, IWithStash
-{
+internal sealed class CohortActor : UntypedPersistentActor, IWithTimers, IWithStash {
     private readonly ILoggingAdapter _log = Context.GetLogger();
     public CohortDeliveryState State { get; private set; }
     private readonly IActorRef _textSynthesizer;
@@ -262,8 +249,7 @@ internal sealed class CohortActor : UntypedPersistentActor, IWithTimers, IWithSt
 We inject the `IServiceProvider` as a dependency into the actor and then call `CreateScope` on it whenever we need access to a transient dependency:
 
 ```cs
-private async Task<SubscriberCohort?> GetCohortFromDb(CohortId cohortId, CancellationToken ct = default)
-{
+private async Task<SubscriberCohort?> GetCohortFromDb(CohortId cohortId, CancellationToken ct = default) {
     using var scope = _serviceProvider.CreateScope();
     var cohortRepository = scope.ServiceProvider.GetRequiredService<ICohortRepository>();
     return await cohortRepository.GetCohortFromDb(cohortId, ct);

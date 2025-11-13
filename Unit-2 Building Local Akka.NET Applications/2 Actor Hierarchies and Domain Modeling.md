@@ -5,8 +5,7 @@ In this lesson, we’re going to build out `AkkaWordCounter2`’s messaging str
 Throughout Akka.NET Bootcamp so far, we’ve only looked at “top-level” actors—these are actors we create using the `ActorSystem.ActorOf` method directly:
 
 ```cs
-.WithActors((system, registry, resolver) =>
-{
+.WithActors((system, registry, resolver) => {
     var helloActor = system.ActorOf(Props.Create(() => new HelloActor()), "hello-actor");
 })
 ```
@@ -171,13 +170,12 @@ namespace AkkaWordCounter2.App;
 /// <summary>
 /// Value type for enforcing absolute uris
 /// </summary>
-public record struct AbsoluteUri
-{
-    public AbsoluteUri(Uri value)
-    {
+public record struct AbsoluteUri {
+    public AbsoluteUri(Uri value) {
         Value = value;
-        if (!value.IsAbsoluteUri)
+        if (!value.IsAbsoluteUri) {
             throw new ArgumentException("Value must be an absolute URL", nameof(value));
+        }
     }
 
     public Uri Value { get; }
@@ -195,8 +193,7 @@ A technique we did not explore in “[Effective Actor Messaging](https://petabri
 Add this piece of code to `Messages.cs` inside `AkkaWordCounter2.App`:
 
 ```cs
-public interface IWithDocumentId
-{
+public interface IWithDocumentId {
     AbsoluteUri DocumentId { get; }
 }
 ```
@@ -208,15 +205,12 @@ The message-specific handlers will be implemented in the leaf node actors in our
 So next, let’s go ahead and add the following to our `Messages.cs` file:
 
 ```cs
-public static class DocumentCommands
-{
+public static class DocumentCommands {
     public sealed record ScanDocument(AbsoluteUri DocumentId) : IWithDocumentId;
-
     public sealed record ScanDocuments(IReadOnlyList<AbsoluteUri> DocumentIds);
 }
 
-public static class DocumentEvents
-{
+public static class DocumentEvents {
     public sealed record DocumentScanFailed(AbsoluteUri DocumentId, string Reason) : IWithDocumentId;
 
     public sealed record WordsFound(AbsoluteUri DocumentId, IReadOnlyList<string> Tokens) : IWithDocumentId;
@@ -231,12 +225,10 @@ public static class DocumentEvents
         IImmutableDictionary<string, int> WordFrequencies);
 }
 
-public static class DocumentQueries
-{
+public static class DocumentQueries {
     public sealed record FetchCounts(AbsoluteUri DocumentId) : IWithDocumentId;
 
-    public sealed class SubscribeToAllCounts
-    {
+    public sealed class SubscribeToAllCounts {
         public static readonly SubscribeToAllCounts Instance = new();
         private SubscribeToAllCounts(){}
     }

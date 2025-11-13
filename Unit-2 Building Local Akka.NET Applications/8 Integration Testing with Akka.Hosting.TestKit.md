@@ -39,22 +39,17 @@ using Xunit.Abstractions;
 
 namespace AkkaWordCounter2.App.Tests;
 
-public class ParserActorSpecs : Akka.Hosting.TestKit.TestKit
-{
-    public ParserActorSpecs(ITestOutputHelper output) : base(output: output)
-    {
+public class ParserActorSpecs : Akka.Hosting.TestKit.TestKit {
+    public ParserActorSpecs(ITestOutputHelper output) : base(output: output) {
     }
 
-    protected override void ConfigureServices(HostBuilderContext context, IServiceCollection services)
-    {
+    protected override void ConfigureServices(HostBuilderContext context, IServiceCollection services) {
         services.AddHttpClient();
     }
 
-    protected override void ConfigureAkka(AkkaConfigurationBuilder builder, IServiceProvider provider)
-    {
+    protected override void ConfigureAkka(AkkaConfigurationBuilder builder, IServiceProvider provider) {
         builder
-            .ConfigureLoggers(configBuilder =>
-            {
+            .ConfigureLoggers(configBuilder => {
                 configBuilder.LogLevel = Akka.Event.LogLevel.DebugLevel;
             })
             .AddParserActors();
@@ -63,8 +58,7 @@ public class ParserActorSpecs : Akka.Hosting.TestKit.TestKit
     public static readonly AbsoluteUri ParserActorUri = new(new Uri("https://getakka.net/"));
     
     [Fact]
-    public async Task ShouldParseWords()
-    {
+    public async Task ShouldParseWords() {
         // arrange
         var parserActor = await ActorRegistry.GetAsync<ParserActor>();
         var expectResultsProbe = CreateTestProbe();
@@ -106,11 +100,9 @@ Let’s break down what we just did with `ParserActorSpecs`:
 Inside the `ConfigureAkka` method we call our `AddParsers` configuration method we defined earlier:
 
 ```cs
-    protected override void ConfigureAkka(AkkaConfigurationBuilder builder, IServiceProvider provider)
-    {
+    protected override void ConfigureAkka(AkkaConfigurationBuilder builder, IServiceProvider provider) {
         builder
-            .ConfigureLoggers(configBuilder =>
-            {
+            .ConfigureLoggers(configBuilder => {
                 configBuilder.LogLevel = Akka.Event.LogLevel.DebugLevel;
             })
             .AddParserActors();

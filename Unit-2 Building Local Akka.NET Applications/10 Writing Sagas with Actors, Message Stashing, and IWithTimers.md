@@ -72,18 +72,13 @@ using System.Collections.Immutable;
 
 namespace AkkaWordCounter2.App;
 
-public static class CollectionUtilities
-{
-    public static IImmutableDictionary<string, int> MergeWordCounts(IEnumerable<IDictionary<string, int>> counts)
-    {
+public static class CollectionUtilities {
+    public static IImmutableDictionary<string, int> MergeWordCounts(IEnumerable<IDictionary<string, int>> counts) {
         var mergedCounts = counts.Aggregate(ImmutableDictionary<string, int>.Empty,
-            (acc, next) =>
-            {
-                foreach (var (word, count) in next)
-                {
+            (acc, next) => {
+                foreach (var (word, count) in next) {
                     acc = acc.SetItem(word, acc.GetValueOrDefault(word, 0) + count);
                 }
-
                 return acc;
             });
         return mergedCounts;
@@ -109,8 +104,7 @@ namespace AkkaWordCounter2.App.Actors;
 /// <summary>
 /// Responsible for processing a batch of documents.
 /// </summary>
-public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
-{
+public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers {
     private readonly ILoggingAdapter _log = Context.GetLogger();
     private readonly IRequiredActor<WordCounterManager> _wordCounterManager;
     private readonly IRequiredActor<ParserActor> _parserActor;
@@ -122,16 +116,14 @@ public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
     private readonly Dictionary<AbsoluteUri, ProcessingStatus> _documentsToProcess = new();
     private readonly Dictionary<AbsoluteUri, ImmutableDictionary<string, int>> _wordCounts = new();
     
-    public enum ProcessingStatus
-    {
+    public enum ProcessingStatus {
         Processing = 0,
         Completed = 1,
         FailedError = 2,
         FailedTimeout = 3
     }
 
-    public sealed class JobTimeout
-    {
+    public sealed class JobTimeout {
         public static readonly JobTimeout Instance = new();
         private JobTimeout(){ }
     }
@@ -144,14 +136,11 @@ public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
         _parserActor = parserActor;
     }
 
-    protected override void OnReceive(object message)
-    {
-        switch (message)
-        {
+    protected override void OnReceive(object message) {
+        switch (message) {
             case ScanDocuments scan:
                 _log.Info("Received scan request for {0}", scan.DocumentIds.Count);
-                foreach (var document in scan.DocumentIds)
-                {
+                foreach (var document in scan.DocumentIds) {
                     _documentsToProcess[document] = ProcessingStatus.Processing;
 
                     // begin processing
@@ -165,8 +154,7 @@ public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
                 Timers.StartSingleTimer("job-timeout", JobTimeout.Instance, TimeSpan.FromSeconds(30));
                 Stash.UnstashAll();
                 break;
-            default:
-            {
+            default: {
                 // buffer any other messages until the job starts
                 Stash.Stash();
                 break;
@@ -174,10 +162,8 @@ public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
         }
     }
 
-    private void Running(object message)
-    {
-        switch (message)
-        {
+    private void Running(object message) {
+        switch (message) {
             case DocumentEvents.WordsFound found:
                 _wordCounterManager.ActorRef.Forward(found);
                 break;
@@ -199,10 +185,8 @@ public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
                 _log.Error("Job timed out");
                 
                 // Set all documents that haven't been processed yet to timed out
-                foreach (var (document, status) in _documentsToProcess)
-                {
-                    if (status == ProcessingStatus.Processing)
-                    {
+                foreach (var (document, status) in _documentsToProcess) {
+                    if (status == ProcessingStatus.Processing) {
                         _documentsToProcess[document] = ProcessingStatus.FailedTimeout;
                     }
                 }
@@ -218,13 +202,11 @@ public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
         }
     }
 
-    private void HandleJobCompletedMaybe(bool force = false)
-    {
+    private void HandleJobCompletedMaybe(bool force = false) {
         if (!IsJobCompleted() && !force) return;
         
         // log statuses of each page
-        foreach (var (document, status) in _documentsToProcess)
-        {
+        foreach (var (document, status) in _documentsToProcess) {
             _log.Info("Document {0} status: {1}, total words: {2}", document, status,
                 _wordCounts[document].Values.Sum());
         }
@@ -235,16 +217,14 @@ public sealed class WordCountJobActor : UntypedActor, IWithStash, IWithTimers
             new DocumentEvents.
                 CountsTabulatedForDocuments(_documentsToProcess.Keys.ToList(), mergedCounts);
             
-        foreach (var subscriber in _subscribers)
-        {
+        foreach (var subscriber in _subscribers) {
             subscriber.Tell(finalOutput);
         }
 
         Context.Stop(Self);
     }
 
-    private bool IsJobCompleted()
-    {
+    private bool IsJobCompleted() {
         return _documentsToProcess.Values.All(x => x > ProcessingStatus.Processing);
     }
 }
@@ -267,14 +247,11 @@ The `IStash` will be populated via property dependency injection by Akka.NET i
 The `IStash` is typically used in combination with [behavior-switching](https://petabridge.com/bootcamp/lessons/unit-1/behavior-switching/) to allow actors to defer processing messages until they’re ready, which is exactly what we’re doing inside the `OnReceive` behavior:
 
 ```cs
-protected override void OnReceive(object message)
-{
-    switch (message)
-    {
+protected override void OnReceive(object message) {
+    switch (message) {
         case ScanDocuments scan:
             _log.Info("Received scan request for {0}", scan.DocumentIds.Count);
-            foreach (var document in scan.DocumentIds)
-            {
+            foreach (var document in scan.DocumentIds) {
                 _documentsToProcess[document] = ProcessingStatus.Processing;
 
                 // begin processing
@@ -288,8 +265,7 @@ protected override void OnReceive(object message)
             Timers.StartSingleTimer("job-timeout", JobTimeout.Instance, TimeSpan.FromSeconds(30));
             Stash.UnstashAll();
             break;
-        default:
-        {
+        default: {
             // buffer any other messages until the job starts
             Stash.Stash();
             break;
@@ -360,18 +336,15 @@ _parserActor.ActorRef.Tell(new ScanDocument(document));
 We are almost done with `AkkaWordCounter2` - the next thing we need to do is open the `AkkaWordCounter2.App/Config/ActorConfigurations.cs` file and add the following lines to the bottom of the `ActorConfigurations` class:
 
 ```cs
-public static AkkaConfigurationBuilder AddJobActor(this AkkaConfigurationBuilder builder)
-{
-    return builder.WithActors((system, registry, resolver) =>
-    {
+public static AkkaConfigurationBuilder AddJobActor(this AkkaConfigurationBuilder builder) {
+    return builder.WithActors((system, registry, resolver) => {
         var props = resolver.Props<WordCountJobActor>();
         var actor = system.ActorOf(props, "job");
         registry.Register<WordCountJobActor>(actor);
     });
 }
     
-public static AkkaConfigurationBuilder AddApplicationActors(this AkkaConfigurationBuilder builder)
-{
+public static AkkaConfigurationBuilder AddApplicationActors(this AkkaConfigurationBuilder builder) {
     return builder
         .AddWordCounterActor()
         .AddParserActors()
@@ -384,11 +357,9 @@ This will add the `AkkaConfigurationBuilder` extension methods we want for con
 Next, let’s open `AkkaWordCounter2.App/Program.cs` and add the following code to our `AddAkka` method:
 
 ```cs
-services.AddAkka("MyActorSystem", (builder, sp) =>
-        {
+services.AddAkka("MyActorSystem", (builder, sp) => {
             builder
-                .ConfigureLoggers(logConfig =>
-                {
+                .ConfigureLoggers(logConfig => {
                     logConfig.AddLoggerFactory();
                 })
                 .AddApplicationActors();
@@ -414,8 +385,7 @@ Akka.Hosting has just the thing we need for this: **startup tasks**, which laun
 Add the following code to the `AkkaConfigurationBuilder` in `AkkaWordCounter2.App/Program.cs`:
 
 ```cs
-.AddStartup(async (system, registry) =>
-{
+.AddStartup(async (system, registry) => {
     var settings = sp.GetRequiredService<IOptions<WordCounterSettings>>();
     var jobActor = await registry.GetAsync<WordCountJobActor>();
     var absoluteUris = settings.Value.DocumentUris.Select(uri => new AbsoluteUri(new Uri(uri))).ToArray();
@@ -424,8 +394,7 @@ Add the following code to the `AkkaConfigurationBuilder` in `AkkaWordCounter2
     // wait for the job to complete
     var counts = await jobActor.Ask<DocumentEvents.CountsTabulatedForDocuments>(DocumentQueries.SubscribeToAllCounts.Instance, TimeSpan.FromMinutes(1));
     
-    foreach (var (word, count) in counts.WordFrequencies)
-    {
+    foreach (var (word, count) in counts.WordFrequencies) {
         Console.WriteLine($"Word count for {word}: {count}");
     }
 });

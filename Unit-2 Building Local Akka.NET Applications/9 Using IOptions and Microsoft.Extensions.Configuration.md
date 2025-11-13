@@ -12,8 +12,7 @@ In this instance, we are going to use Microsoft.Extensions.Configuration to do i
 First, inside our `AkkaWordCounter2.App/Config` folder, please add a new file called `WordCounterSettings.cs` and then type the following:
 
 ```cs
-public class WordCounterSettings
-{
+public class WordCounterSettings {
     public string[] DocumentUris { get; set; } = [];
 }
 ```
@@ -29,8 +28,7 @@ This is a very simple strongly typed settings class that we’re going to use to
             "Microsoft": "Information"
         }
     },
-    "WordCounter":
-    {
+    "WordCounter": {
         "DocumentUris": [
             "https://raw.githubusercontent.com/akkadotnet/akka.net/dev/README.md",
             "https://getakka.net/"
@@ -64,19 +62,15 @@ We already have our `WordCounterSettings` class defined inside `AkkaWordCount
 Inside `AkkaWordCounter2.App/Config/WordCounterSettings.cs` please type the following:
 
 ```cs
-public sealed class WordCounterSettingsValidator : IValidateOptions<WordCounterSettings>
-{
-    public ValidateOptionsResult Validate(string? name, WordCounterSettings options)
-    {
+public sealed class WordCounterSettingsValidator : IValidateOptions<WordCounterSettings> {
+    public ValidateOptionsResult Validate(string? name, WordCounterSettings options) {
         var errors = new List<string>();
         
-        if (options.DocumentUris.Length == 0)
-        {
+        if (options.DocumentUris.Length == 0) {
             errors.Add("DocumentUris must contain at least one URI");
         }
         
-        if(options.DocumentUris.Any(uri => !Uri.IsWellFormedUriString(uri, UriKind.Absolute)))
-        {
+        if(options.DocumentUris.Any(uri => !Uri.IsWellFormedUriString(uri, UriKind.Absolute))) {
             errors.Add("DocumentUris must contain only absolute URIs");
         }
         
@@ -86,10 +80,8 @@ public sealed class WordCounterSettingsValidator : IValidateOptions<WordCounterS
     }
 }
 
-public static class WordCounterSettingsExtensions
-{
-    public static IServiceCollection AddWordCounterSettings(this IServiceCollection services)
-    {
+public static class WordCounterSettingsExtensions {
+    public static IServiceCollection AddWordCounterSettings(this IServiceCollection services) {
         services.AddSingleton<IValidateOptions<WordCounterSettings>, WordCounterSettingsValidator>();
         services.AddOptionsWithValidateOnStart<WordCounterSettings>()
             .BindConfiguration("WordCounter");
@@ -119,8 +111,7 @@ First, we need to add our configuration sources to the host builder:
 
 ```cs
 hostBuilder
-    .ConfigureAppConfiguration((context, builder) =>
-    {
+    .ConfigureAppConfiguration((context, builder) => {
         builder
             .AddJsonFile("appsettings.json", optional: true)
             .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", 
@@ -150,23 +141,19 @@ using Microsoft.Extensions.Options;
 var hostBuilder = new HostBuilder();
 
 hostBuilder
-    .ConfigureAppConfiguration((context, builder) =>
-    {
+    .ConfigureAppConfiguration((context, builder) => {
         builder
             .AddJsonFile("appsettings.json", optional: true)
             .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", 
                     optional: true)
             .AddEnvironmentVariables();
     })
-    .ConfigureServices((context, services) =>
-    {
+    .ConfigureServices((context, services) => {
         services.AddWordCounterSettings();
         services.AddHttpClient(); // needed for IHttpClientFactory
-        services.AddAkka("MyActorSystem", (builder, sp) =>
-        {
+        services.AddAkka("MyActorSystem", (builder, sp) => {
             builder
-                .ConfigureLoggers(logConfig =>
-                {
+                .ConfigureLoggers(logConfig => {
                     logConfig.AddLoggerFactory();
                 });
         });

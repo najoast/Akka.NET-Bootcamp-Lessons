@@ -144,45 +144,40 @@ public sealed class ChatRoomActor : UntypedActor {
 
     /* ChatRoomActor state */
     public string ChatId { get; }
-    public Dictionary<IActorRef, string> Users {get;} = new();
+    public Dictionary<IActorRef, string> Users { get; } = new();
     public CircularBuffer<Say> Messages { get; }
-    public int MaxRetainedMessages; { get; }
+    public int MaxRetainedMessages { get; }
 
-    public ChatRoomActor(string chatId, int maxRetainedMessages = 100){
+    public ChatRoomActor(string chatId, int maxRetainedMessages = 100) {
         ChatId = chatId;
         MaxRetainedMessages = 100;
         Messages = new CircularBuffer<Say>(MaxRetainedMessages);
     }
 
-    protected override OnReceive(object message){
-        switch(message){
-            case Say say:
-            {
+    protected override OnReceive(object message) {
+        switch(message) {
+            case Say say: {
                 Messages.Enqueue(say);
-                foreach(var u in Users){
+                foreach(var u in Users) {
                     // publish msg to user
                     u.Key.Tell(say);
                 }
                 break;
             }
-            case UserJoined join:
-            {
-                if(!Users.TryGetValue(join.ConnectionActor, out var userId)){
+            case UserJoined join: {
+                if(!Users.TryGetValue(join.ConnectionActor, out var userId)) {
                     // sync user
-                    foreach(var m in Messages){
+                    foreach(var m in Messages) {
                         join.ConnectionActor.Tell(m);
                     }
-
                     Users[join.ConnectionActor] = join.UserId;
                 }
-
                 // automatically un-sub disconnected users
                 Context.WatchWith(join.ConnectionActor, 
                     new UserLeft(join.UserId, join.ChatId, join.ConnectionActor));
                 break;
             }
-            case UserLeft left:
-            {
+            case UserLeft left: {
                 // stop publishing to this user
                 Users.Remove(left.ConnectionActor);
                 break;

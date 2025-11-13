@@ -46,16 +46,14 @@ using HtmlAgilityPack;
 
 namespace AkkaWordCounter2.App;
 
-public static class TextExtractor
-{
+public static class TextExtractor {
     /// <summary>
     /// Extracts raw text from a HtmlDocument
     /// </summary>
     /// <remarks>
     /// Shouldn't pick up stuff from script / style tags etc
     /// </remarks>
-    public static IEnumerable<string> ExtractText(HtmlDocument htmlDocument)
-    {
+    public static IEnumerable<string> ExtractText(HtmlDocument htmlDocument) {
         var root = htmlDocument.DocumentNode;
         foreach (var node in root.Descendants()
                      .Where(n => n.NodeType == HtmlNodeType.Text &&
@@ -68,11 +66,9 @@ public static class TextExtractor
         }
     }
     
-    public static IEnumerable<string> ExtractTokens(string text)
-    {
+    public static IEnumerable<string> ExtractTokens(string text) {
         var tokens = text.Split([' ', '\n', '\r', '\t'], StringSplitOptions.RemoveEmptyEntries);
-        foreach (var token in tokens)
-        {
+        foreach (var token in tokens) {
             yield return token.Trim();
         }
     }
@@ -96,37 +92,27 @@ using static AkkaWordCounter2.App.DocumentEvents;
 
 namespace AkkaWordCounter2.App.Actors;
 
-public sealed class ParserActor : UntypedActor
-{
+public sealed class ParserActor : UntypedActor {
     public const int ChunkSize = 20;
     private readonly ILoggingAdapter _log = Context.GetLogger();
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly CancellationTokenSource _shutdownCts = new();
 
-    public ParserActor(IHttpClientFactory httpClientFactory)
-    {
+    public ParserActor(IHttpClientFactory httpClientFactory) {
         _httpClientFactory = httpClientFactory;
     }
 
-    protected override void OnReceive(object message)
-    {
-        switch (message)
-        {
-            case ScanDocument document:
-            {
-                RunTask(async () =>
-                {
-                    try
-                    {
+    protected override void OnReceive(object message) {
+        switch (message) {
+            case ScanDocument document: {
+                RunTask(async () => {
+                    try {
                         var textFeatures = await HandleDocument(document.DocumentId);
-                        foreach(var f in textFeatures)
-                        {
+                        foreach(var f in textFeatures) {
                             Sender.Tell(new WordsFound(document.DocumentId, f));
                         }
                         Sender.Tell(new EndOfDocumentReached(document.DocumentId));
-                    }
-                    catch(Exception ex)
-                    {
+                    } catch(Exception ex) {
                         _log.Error(ex, "Error processing document {0}", document.DocumentId);
                         Sender.Tell(new DocumentScanFailed(document.DocumentId, ex.Message));
                     }
@@ -136,14 +122,12 @@ public sealed class ParserActor : UntypedActor
         }
     }
 
-    protected override void PostStop()
-    {
+    protected override void PostStop() {
         // shut down any in-flight requests
         _shutdownCts.Cancel();
     }
 
-    private async Task<IEnumerable<string[]>> HandleDocument(AbsoluteUri uri)
-    {
+    private async Task<IEnumerable<string[]>> HandleDocument(AbsoluteUri uri) {
         using var requestToken = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         using var linkedToken = CancellationTokenSource
             .CreateLinkedTokenSource(requestToken.Token, 
@@ -171,19 +155,14 @@ Upon receiving this command, we perform asynchronous I/O using `HttpClient`. In
 Normally an actor’s receive method must return a `void` - [`async void` methods are evil](https://sergeyteplyakov.github.io/Blog/csharp/2025/01/28/The_Dangers_Of_Async_Void.html), so if we want to `await` inside an actor we just need to call `RunTask<T>(Func<Task<T>> fn)`[^1] first.
 
 ```cs
-RunTask(async () =>
-{
-    try
-    {
+RunTask(async () => {
+    try {
         var textFeatures = await HandleDocument(document.DocumentId);
-        foreach(var f in textFeatures)
-        {
+        foreach(var f in textFeatures) {
             Sender.Tell(new WordsFound(document.DocumentId, f));
         }
         Sender.Tell(new EndOfDocumentReached(document.DocumentId));
-    }
-    catch(Exception ex)
-    {
+    } catch(Exception ex) {
         _log.Error(ex, "Error processing document {0}", document.DocumentId);
         Sender.Tell(new DocumentScanFailed(document.DocumentId, ex.Message));
     }
@@ -205,8 +184,7 @@ In situations where it’s desirable to allow an actor to interleave messages - 
 Here’s an example of `PipeTo<T>` being used for concurrent HTTP crawling inside [https://github.com/Aaronontheweb/link-validator](https://github.com/Aaronontheweb/link-validator) - an Akka.NET-powered CLI for doing bad link detection inside CI/CD pipelines for websites:
 
 ```cs
-private void HandleCrawlUrl(CrawlUrl msg)
-{
+private void HandleCrawlUrl(CrawlUrl msg) {
     /*
      * We will not receive a CrawlUrl message from the IndexerActor if we've
      * already seen this page before.
@@ -216,8 +194,7 @@ private void HandleCrawlUrl(CrawlUrl msg)
     DoWork().PipeTo(Self, Self, result => result);
     return;
 
-    async Task<PageCrawled> DoWork()
-    {
+    async Task<PageCrawled> DoWork() {
         // async I/O code
     }
 }
